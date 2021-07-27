@@ -28,6 +28,25 @@
       "id": "vTXT5JEA5riLqvRzVSs6Y"
     }
   ],
-  "posts": [],
+  "posts": [
+    {
+      "message": "test msg",
+      "author": "cprWHwrwHLHgw0t8jOIfP",
+      "createdAt": 1627410461678,
+      "id": "AI9bISFgfPFFFB2oJXwoC"
+    },
+    {
+      "message": "Hello there",
+      "author": "cprWHwrwHLHgw0t8jOIfP",
+      "createdAt": 1627410702515,
+      "id": "olMqhOu_CcGzhb-71M3Bi"
+    },
+    {
+      "message": "Why",
+      "author": "cprWHwrwHLHgw0t8jOIfP",
+      "createdAt": 1627411090481,
+      "id": "BFuNacRiYAOK3ggvJ9ZEz"
+    }
+  ],
   "settings": []
 }

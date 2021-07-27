@@ -1,4 +1,7 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, PubSub } = require('apollo-server')
+
+const pubsub = new PubSub()
+const NEW_ITEM = 'NEW_ITEM'
 
 const typeDefs = gql`
   type User {
@@ -10,6 +13,10 @@ const typeDefs = gql`
   type Settings {
     user: User!
     theme: String!
+  }
+
+  type Item {
+    task: String!
   }
 
   # pass an object as a argument
@@ -25,6 +32,11 @@ const typeDefs = gql`
 
   type Mutation {
     settings(input: NewSettingsInput!): Settings!
+    createItem(task: String!): Item!
+  }
+
+  type Subscription {
+    newItem: Item
   }
 `
 
@@ -50,6 +62,18 @@ const resolvers = {
     settings(_, { input }) {
       return input
     },
+    createItem(_root, { task }) {
+      const item = { task }
+      pubsub.publish(NEW_ITEM, { newItem: item })
+
+      return item
+    },
+  },
+
+  Subscription: {
+    newItem: {
+      subscribe: () => pubsub.asyncIterator(NEW_ITEM),
+    },
   },
 
   Settings: {
@@ -62,6 +86,18 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context({ connection }) {
+    if (connection) {
+      return { ...connection.context }
+    }
+
+    return {}
+  },
+  subscriptions: {
+    onConnect(connectionParams) {
+      // handle auth here
+    },
+  },
 })
 
 server.listen().then(({ url }) => console.log(`server at ${url}`))

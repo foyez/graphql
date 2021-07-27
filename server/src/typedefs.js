@@ -101,4 +101,7 @@ module.exports = gql`
     signin(input: SigninInput!): AuthUser!
   }
 
+  type Subscription {
+    newPost: Post
+  }
 `
