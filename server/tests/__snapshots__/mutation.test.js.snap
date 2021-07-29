@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mutations createPost 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: models.Post.createOne is not a function],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
