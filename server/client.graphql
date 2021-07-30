@@ -1,0 +1,8 @@
+query GetMe($yes: Boolean!) {
+  me {
+    # @skip is opposite of @include
+    error @include(if: $yes)
+    username
+    createdAt
+  }
+}

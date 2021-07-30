@@ -5,17 +5,31 @@ const {
   AuthenticationError,
   UserInputError,
   ApolloError,
+  SchemaDirectiveVisitor,
 } = require('apollo-server')
+const { defaultFieldResolver } = require('graphql')
 
 const pubsub = new PubSub()
 const NEW_ITEM = 'NEW_ITEM'
 
+class LogDirective extends SchemaDirectiveVisitor {
+  visitFieldDefinition(field) {
+    const resolver = field.resolve || defaultFieldResolver
+    field.resolve = (args) => {
+      console.log('🔥 hello')
+      return resolver.apply(this, args)
+    }
+  }
+}
+
 const typeDefs = gql`
+  directive @log on FIELD_DEFINITION
+
   type User {
-    id: ID!
-    error: String!
+    id: ID! @log
+    error: String! @deprecated(reason: "use the other field")
     username: String!
-    createdAt: Int!
+    createdAt: String!
   }
 
   type Settings {
@@ -54,7 +68,7 @@ const resolvers = {
       return {
         id: 1,
         username: 'foyez',
-        createdAt: 3749584958,
+        createdAt: '3749584958',
       }
     },
     // (root, args, context, info)
@@ -93,9 +107,8 @@ const resolvers = {
     error() {
       // throw new Error("nooo");
       // throw new AuthenticationError('not authenticated')
-      throw new UserInputError('wrong args', {
-        invalidArgs: 'name',
-      })
+      // throw new UserInputError('wrong args', { invalidArgs: 'name' })
+      return 'error'
     },
   },
 }
@@ -103,10 +116,13 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  formatError(err) {
-    console.log(err)
-    return err
+  schemaDirectives: {
+    log: LogDirective,
   },
+  // formatError(err) {
+  //   console.log(err)
+  //   return err
+  // },
   context({ connection }) {
     if (connection) {
       return { ...connection.context }
